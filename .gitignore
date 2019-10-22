@@ -1,0 +1,12 @@
+.vs
+*.csproj
+Minesweeper-Quest.sln
+
+Library
+Temp
+obj/Debug
+obj/Release
+Extras
+
+Assets/Oculus
+Assets/Oculus.meta
