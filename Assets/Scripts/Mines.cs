@@ -54,6 +54,7 @@ public class Mines : MonoBehaviour
 
         Vector2 current_size = new Vector2(transform.localScale.x * (nx + 0.7f), transform.localScale.z * (nz + 1));
         float factor = Mathf.Min(size.x / current_size.x, size.y / current_size.y);
+        factor *= 0.8f;
         if (factor < 1)
             transform.localScale *= factor;
 
