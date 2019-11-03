@@ -378,8 +378,7 @@ namespace BaroqueUI
                     break;
 
                 case Model.OculusTouch:
-                    //hotspot.localPosition = new Vector3(0, -0.006f, 0.062f);
-                    hotspot.localPosition = new Vector3(0, 0.031f, 0.049f);
+                    hotspot.localPosition = new Vector3(0, -0.006f, 0.062f);
                     break;
 
                 default:
@@ -1119,6 +1118,7 @@ namespace BaroqueUI
 
         public void SetComponentColor(EColorizableComponent component, Color color)
         {
+#if false
             if (baroque_vr_manager is Baroque_OculusVRManager)
             {
                 if (component == EColorizableComponent.Joystick)
@@ -1130,6 +1130,7 @@ namespace BaroqueUI
                 var obm = (Baroque_OculusVRManager)baroque_vr_manager;
                 obm.SetComponentColor(this, (int)component, color);
             }
+#endif
         }
 
         const float HINT_DELAY = 0.75f;

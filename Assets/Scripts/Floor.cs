@@ -9,7 +9,6 @@ public class Floor : MonoBehaviour
     public float flatDistance = 2.3f;
     public float verticalDistance = 50f;
     public float randomZ = 0.1f;
-    public float maximumRange = 10f;
 
 
     private void Start()
@@ -35,28 +34,26 @@ public class Floor : MonoBehaviour
             }
         Debug.Assert(v_index == vertices.Length);
 
-        List<int> triangles = new List<int>();
+        int[] triangles = new int[6 * nb_cells * nb_cells];
+        int t_index = 0;
         for (int j = 0; j < nb_cells; j++)
             for (int i = 0; i < nb_cells; i++)
             {
-                float dist2 = new Vector2(i - halfResolution + 0.5f, j - halfResolution + 0.5f).sqrMagnitude;
-                if (dist2 > maximumRange * maximumRange)
-                    continue;
-
                 v_index = j * nb_vertices + i;
-                triangles.Add(v_index);
-                triangles.Add(v_index + nb_vertices);
-                triangles.Add(v_index + 1);
-                triangles.Add(v_index + 1);
-                triangles.Add(v_index + nb_vertices);
-                triangles.Add(v_index + nb_vertices + 1);
+                triangles[t_index + 0] = v_index;
+                triangles[t_index + 1] = v_index + nb_vertices;
+                triangles[t_index + 2] = v_index + 1;
+                triangles[t_index + 3] = v_index + 1;
+                triangles[t_index + 4] = v_index + nb_vertices;
+                triangles[t_index + 5] = v_index + nb_vertices + 1;
+                t_index += 6;
             }
+        Debug.Assert(t_index == triangles.Length);
 
         var mesh = new Mesh();
         mesh.vertices = vertices;
         mesh.uv = uvs;
-        mesh.SetTriangles(triangles, 0);
-        mesh.Optimize();
+        mesh.triangles = triangles;
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();

@@ -11,7 +11,6 @@ public class LevelBox : MonoBehaviour
     public Color laserColor;
     public Mines correspondingMines;
     public ParticleSystem particleSys;
-    public bool autoClickAtStartup;
 
     public void SetHighlight(int highlight)
     {

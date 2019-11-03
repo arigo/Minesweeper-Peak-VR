@@ -18,6 +18,7 @@ namespace BaroqueUI
 
         public GameObject Build()
         {
+#if false
             GameObject ovrCameraRig = Instantiate(ovrCameraRigPrefab);
             ovrCameraRig.name = "OVRCameraRig";
 
@@ -47,6 +48,8 @@ namespace BaroqueUI
             avt.StartWithControllers = true;
 
             return ovrCameraRig;
+#endif
+            throw new System.Exception("no OVRCameraRig!");
         }
     }
 }

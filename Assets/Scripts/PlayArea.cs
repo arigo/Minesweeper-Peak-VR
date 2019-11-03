@@ -9,7 +9,6 @@ public class PlayArea : MonoBehaviour
     public Transform unknownPrefab;
     public Clock clock;
     public GameObject selectLevel;
-    public Material instanciatedColorMaterial;
     public ParticleSystem smokeParticleSys, successParticleSys;
     public Transform explosionPrefab;
     public Transform bombPrefab, explodedBombPrefab;

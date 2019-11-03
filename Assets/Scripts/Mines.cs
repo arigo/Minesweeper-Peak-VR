@@ -54,7 +54,6 @@ public class Mines : MonoBehaviour
 
         Vector2 current_size = new Vector2(transform.localScale.x * (nx + 0.7f), transform.localScale.z * (nz + 1));
         float factor = Mathf.Min(size.x / current_size.x, size.y / current_size.y);
-        factor *= 0.8f;
         if (factor < 1)
             transform.localScale *= factor;
 
@@ -62,8 +61,8 @@ public class Mines : MonoBehaviour
         center.y = 0;
         transform.position -= center;
 
-        yield return null;
-        //Shader.WarmupAllShaders();
+        /*yield return null;
+        Shader.WarmupAllShaders();*/
     }
 
     public void Populate(Vector3Int pos, Transform copy_rendering, float target_scale)

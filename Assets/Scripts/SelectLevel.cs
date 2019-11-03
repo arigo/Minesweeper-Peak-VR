@@ -29,20 +29,8 @@ public class SelectLevel : MonoBehaviour
         var gt = Controller.GlobalTracker(this);
         gt.onControllersUpdate += Gt_onControllersUpdate;
 
-#if UNITY_EDITOR
-        StartCoroutine(_AutoClick());
-#endif
+        LoadLocalBest(0);   /* precache the file */
     }
-
-#if UNITY_EDITOR
-    IEnumerator _AutoClick()
-    {
-        yield return new WaitForSeconds(0.75f);
-        foreach (var level_box in GetComponentsInChildren<LevelBox>())
-            if (level_box.autoClickAtStartup)
-                SelectedLevel(level_box, Vector3.zero);
-    }
-#endif
 
     private void Gt_onControllersUpdate(Controller[] controllers)
     {
@@ -264,14 +252,27 @@ public class SelectLevel : MonoBehaviour
 
         if (contact_server)
         {
-            string hexdigest = CalculateMD5Hash(mines.nbombs + "SeCrEt" + local_best);
-            string url = string.Format("https://vrsketch.eu/minesweeper/score?h={0}", hexdigest);
-            WWW www = new WWW(url);
-            yield return www;
+            string wwwtext = null;
+            string secret = mines.nbombs + "SeCrEt" + local_best;
 
-            if (string.IsNullOrEmpty(www.error))
+            var th = new System.Threading.Thread(() =>
             {
-                string[] lines = www.text.Split('\n');
+                string hexdigest = CalculateMD5Hash(secret);
+                string url = string.Format("https://vrsketch.eu/minesweeper/score?h={0}", hexdigest);
+
+                var request = System.Net.WebRequest.Create(url);
+                var response = request.GetResponse();
+                using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
+                    wwwtext = reader.ReadToEnd();
+            });
+            th.Start();
+            while (th.IsAlive)
+                yield return null;
+            th.Join();
+            
+            if (!string.IsNullOrEmpty(wwwtext))
+            {
+                string[] lines = wwwtext.Split('\n');
                 foreach (var mines1 in FindObjectsOfType<Mines>())
                     mines1.remoteBestScore = ParseBest(lines, mines1.nbombs);
             }

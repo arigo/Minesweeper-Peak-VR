@@ -57,7 +57,6 @@ namespace BaroqueUI
     }
 
 
-#if false
     class Baroque_SteamVRManager : BaroqueVRManager
     {
         Valve.VR.VRControllerState_t controllerState;
@@ -160,9 +159,9 @@ namespace BaroqueUI
                     "and SteamVR is installed");
         }
     }
-#endif
 
 
+#if false
     class Baroque_OculusVRManager : BaroqueVRManager
     {
         OVRCameraRig camera_rig;
@@ -171,7 +170,7 @@ namespace BaroqueUI
         GameObject screen_fade;
         Material screen_fade_material;
         Coroutine screen_fade_coro;
-        //Texture controller_albedo_with_mask;
+        Texture controller_albedo_with_mask;
 
         class ComponentColors
         {
@@ -189,8 +188,7 @@ namespace BaroqueUI
 
         internal Baroque_OculusVRManager()
         {
-            //GameObject rig = LoadCameraRig("OVRCameraRig");
-            GameObject rig = UnityEngine.Object.FindObjectOfType<OVRCameraRig>().gameObject;
+            GameObject rig = LoadCameraRig("OVRCameraRig");
 
             camera_rig = rig.GetComponent<OVRCameraRig>();
             Debug.Assert(camera_rig != null);
@@ -202,7 +200,7 @@ namespace BaroqueUI
             head_transform = camera_rig.centerEyeAnchor;
             camerarig_transform = camera_rig.transform;
 
-            //controller_albedo_with_mask = Resources.Load<Texture>("BaroqueUI/ControllerOculusTouch/AlbedoWithMask");
+            controller_albedo_with_mask = Resources.Load<Texture>("BaroqueUI/ControllerOculusTouch/AlbedoWithMask");
             screen_fade_material = new Material(Resources.Load<Material>("BaroqueUI/Manual Fade Material"));
         }
 
@@ -254,7 +252,6 @@ namespace BaroqueUI
         {
             if (camera_rig)
             {
-#if false
                 /* hide the ghost hands, only show the controllers */
                 Action<OvrAvatarHand> disable_mesh_renderer = (hand) =>
                 {
@@ -264,12 +261,10 @@ namespace BaroqueUI
                 };
                 disable_mesh_renderer(avatar.HandLeft);
                 disable_mesh_renderer(avatar.HandRight);
-#endif
 
                 /* invoke the main processing loop for BaroqueUI.Controller */
                 Baroque._OnNewPosesApplied();
 
-#if false
                 /* We don't need transparent controllers, but we want them to combine
                  * correctly with transparent pointers, for example, so make them opaque.
                  * Also tweak the texture to be AlbedoWithMask instead of the standard one:
@@ -307,7 +302,6 @@ namespace BaroqueUI
                     mat.SetTexture("_Albedo", controller_albedo_with_mask);
                     mat.SetTexture("_Components", GetComponentColors(ctrl).Apply());
                 };
-#endif
             }
         }
 
@@ -316,7 +310,7 @@ namespace BaroqueUI
             ComponentColors cc = ctrl.GetAdditionalData(ref component_colors);
             if (cc.tex == null)
             {
-                cc.tex = new Texture2D(4, 4, TextureFormat.RGB24, false, false);
+                cc.tex = new Texture2D(4, 4, TextureFormat.RGB24, mipmap: false, linear: false);
                 cc.tex.wrapMode = TextureWrapMode.Clamp;
                 cc.tex.filterMode = FilterMode.Point;
                 cc.cols = new Color32[16];
@@ -404,6 +398,7 @@ namespace BaroqueUI
             return null;   /* someone reported that he gets the message all the time, so return null on Oculus */
         }
     }
+#endif
 
 
     class Baroque_MissingManager : BaroqueVRManager
@@ -465,14 +460,15 @@ namespace BaroqueUI
 #endif
             switch (loaded_device)
             {
-#if false
                 case "OpenVR":
                     baroque_vr_manager = new Baroque_SteamVRManager();
                     return true;
-#endif
+
+#if false
                 case "Oculus":
                     baroque_vr_manager = new Baroque_OculusVRManager();
                     return true;
+#endif
 
                 default:
                     if (!string.IsNullOrEmpty(loaded_device))
